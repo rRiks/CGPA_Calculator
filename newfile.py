@@ -2,9 +2,14 @@ from tkinter import *
 from tkinter import messagebox as ms
 import sqlite3
 
+#with sqlite3.connect('signup_db.db') as db:
+	#c= db.cursor()
+	#c.execute('DROP TABLE user')
+	#db.commit()
+
 with sqlite3.connect('signup_db.db') as db:
 	c= db.cursor()
-	c.execute('CREATE TABLE IF NOT EXISTS user (username TEXT NOT NULL PRIMARY KEY,password NOT NULL);')
+	c.execute('CREATE TABLE IF NOT EXISTS user(username TEXT NOT NULL PRIMARY KEY,password NOT NULL);')
 	db.commit()
 	#db.close()
 
@@ -81,14 +86,14 @@ with sqlite3.connect('student_db.db') as db2:
 					ms.showerror('Error!','Student already exists.')
 				else:
 					ms.showinfo('success!','Student added')
-					self.log()
+					self.log2()
 				c.execute(INSERT ,[(self.n_name.get()),(self.n_name.get()),(self.n_regd_no.get())])
 				db.commit()
 		def submit(self):
 			with sqlite3.connect('student_db.db') as db:
-				db=db.cursor()
-				find_user = ('SELECT regd_no FROM user WHERE regd_no =?')
-			c.execute(find_user,[(self.regd_no.get())])
+				c=db.cursor()
+				find_user = ('SELECT * FROM user WHERE regd_no ={}').format('regd_no')
+			c.execute(find_user)
 			result = c.fetchall()
 			if result:
 				self.logf.pack_forget()
@@ -157,14 +162,11 @@ with sqlite3.connect('student_db.db') as db2:
 			Entry(self.crf,textvariable =self.n_password,bd =5,show='*').grid(row=1,column=1)
 			Button(self.crf,text='Create Account',bd=3,padx=5,pady=5,command=self.validateLogin).grid()
 			Button(self.crf,text='Login into existing account',bd =3,padx=5,pady=5,command=self.log).grid(row=2,column=1)
-
-
 			self.log2f =Frame(self.master ,padx =10,pady=10)
 			Label(self.log2f,text='Registration No',pady =5,padx=5).grid(sticky=W)
 			Entry(self.log2f,textvariable = self.regd_no,bd=5).grid(row = 0,column =1)
 			Button(self.log2f,text='Add New Student',bd=3,padx=5,pady=5,command=self.cr2).grid()
 			Button(self.log2f,text='UPDATE',bd=3,padx=5,pady=5,command=self.submit).grid(row =1,column=1)
-			#self.log2f.pack()
 			self.cr2f =Frame(self.master,padx=10,pady=10)
 			Label(self.cr2f,text='Enter new name  ',pady=5,padx=5).grid(sticky=W)
 			Entry(self.cr2f,textvariable=self.n_name,bd=5).grid(row=0,column=1)
@@ -183,8 +185,7 @@ with sqlite3.connect('student_db.db') as db2:
 
 			elif self.n_password.get() == '':
 				ms.showinfo('Information','Please enter some valid password.')
-			elif len(self.n_password.get()) !=8 :
-				ms.showinfo('Information','Password must be of 8 characters.')
+
 			else:
 				self.new_user()
 		def validateSubmit(self):
